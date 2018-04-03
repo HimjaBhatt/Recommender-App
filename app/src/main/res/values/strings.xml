@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Sense_IT</string>
+
+
+    <string name="todo">TODO</string>
+    <string name="song_1">Song 1</string>
+    <string name="song_2">Song 2</string>
+    <string name="song_3">Song 3</string>
+    <string name="song_4">Song 4</string>
+    <string name="song_5">Song 5</string>
+    <string name="song_6">Song 6</string>
+    <string name="song_7">Song 7</string>
+    <string name="song_8">Song 8</string>
+    <string name="song_9">Song 9</string>
+    <string name="song_10">Song 10</string>
+    <string name="sense_it">SENSEIT!</string>
+    <string name="title_activity_senseit_activity">senseit_activity</string>
+
+    <string  name="welcome">Hi there! How is your day going today? Click on the button below to start recording</string>
+    <string name="submitResponse">Analyze Text!</string>
+    <string name="or">OR</string>
+    <string name="button">Button</string>
+    <string name="say_something">Say something</string>
+    <string name="voiceAnalyzer">Analyze Me!</string>
+    <string name="song_text">Here are a few songs that match your mood:</string>
+
+
+</resources>
