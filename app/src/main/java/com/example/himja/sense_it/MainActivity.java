@@ -1,6 +1,5 @@
 package com.example.himja.sense_it;
 
-import android.support.v7.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,32 +7,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ScrollView;
 import android.text.TextUtils;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Recommendations;
-import kaaes.spotify.webapi.android.models.SeedsGenres;
-import kaaes.spotify.webapi.android.models.Tracks;
 import kaaes.spotify.webapi.android.models.Track;
 import okhttp3.Request;
-import retrofit.http.QueryMap;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
-import retrofit2.http.Path;
 
 import static junit.framework.Assert.assertEquals;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -49,19 +39,15 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.spotify.sdk.android.player.Metadata;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
 
 import static junit.framework.Assert.assertEquals;
 
 
 public class MainActivity extends Activity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback, AdapterView.OnItemSelectedListener
 {
 
     // TODO: Replace with your client ID
@@ -79,9 +65,9 @@ public class MainActivity extends Activity implements
     private Metadata mMetadata;
     private TextView mStatusText;
     private ScrollView mStatusTextScrollView;
+    Spinner spinner;
 
 
-    RecyclerView songs_list = (RecyclerView)findViewById(R.id.songsList);
 
 
     public static final String TAG = "SpotifySdkDemo";
@@ -111,22 +97,11 @@ public class MainActivity extends Activity implements
 
         Intent myIntent = getIntent();
 
-        /*ImageButton pause_buttons = (ImageButton)findViewById(R.id.imageButton);
-
-        pause_buttons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    //getRecommendations();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
-
-
-
-
+        List<Songs> songs = initializeData();
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(songs, getApplication());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
@@ -180,8 +155,9 @@ public class MainActivity extends Activity implements
         switch (view.getId()) {
             // Handle event type as necessary
             case R.id.play_button:
-                uri= TEST_SONG_URI;
+                uri= "spotify:track:6NPVjNh8Jhru9xOmyQigds";
                 break;
+                
             default:
                 throw new IllegalArgumentException("View ID does not have an associated URI to play");
 
@@ -260,28 +236,64 @@ public class MainActivity extends Activity implements
         });
     }
 
+   @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+        String item = adapterView.getItemAtPosition(position).toString();
+
+        // Showing selected spinner item
+        Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        String uri;
+        switch (position){
+            case 0:
+                uri= "spotify:track:6NPVjNh8Jhru9xOmyQigds";
+                break;
+            case 1:
+                uri = "spotify:track:7xHWNBFm6ObGEQPaUxHuKO";
+                break;
+
+            default:
+                throw new IllegalArgumentException("View ID does not have an associated URI to play");
+
+        }
+        mPlayer.playUri(mOperationCallback, uri, 0, 0);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
     class Songs{
 
         String happy_songs_uri;
-        Songs(String happy_songs_uri){
+        String title;
+        String artist;
+
+        Songs(String happy_songs_uri, String title, String artist){
             this.happy_songs_uri = happy_songs_uri;
+            this.title = title;
+            this.artist = artist;
         }
 
-        private List<Songs> happy_songs;
-        private void initializeData(){
-            happy_songs = new ArrayList<>();
-            //Pharell - Happy
-            happy_songs.add(new Songs("spotify:track:6NPVjNh8Jhru9xOmyQigds"));
-            //Sia ft. Kendrick Lamar - The Greatest
-            happy_songs.add(new Songs("spotify:track:7xHWNBFm6ObGEQPaUxHuKO"));
-            //
-            happy_songs.add(new Songs("spotify:track:5i0eU4qWEhgsDcG6xO5yvy"));
-        }
-}
+
+        
+    }
+
+    public List<Songs> initializeData(){
+       List<Songs> happy_songs = new ArrayList<>();
+        //Pharell - Happy
+        happy_songs.add(new Songs("spotify:track:6NPVjNh8Jhru9xOmyQigds","Happy", "Pharell"));
+        //Sia ft. Kendrick Lamar - The Greatest
+        happy_songs.add(new Songs("spotify:track:7xHWNBFm6ObGEQPaUxHuKO" ,"The Greatest", "Sia"));
+        //
+        happy_songs.add(new Songs("spotify:track:5i0eU4qWEhgsDcG6xO5yvy", "Hey, Soul Sister"," Train"));
+        return happy_songs;
+    }
     private SpotifyService mService;
     private OkHttpClient mClient = new OkHttpClient();
 
-    public void getTrack() throws Exception{
+    public Response getTrack() throws Exception{
 
         Track payload =mService.getTrack("6NPVjNh8Jhru9xOmyQigds");
         Request request= new Request.Builder().get().url("https://api.spotify.com/v1/tracks/6NPVjNh8Jhru9xOmyQigds").build();
@@ -290,6 +302,8 @@ public class MainActivity extends Activity implements
         assertEquals(200, response.code());
 
      //TODO: Add a text view reference
+
+        return response;
     }
 
     private Headers mAuthHeader;
@@ -319,8 +333,18 @@ public class MainActivity extends Activity implements
     }*/
 
 
+/*Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
+        //Creating an array adapter
+        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this, R.array.songs_array, android.R.layout.simple_spinner_item);
 
+        // Specify the layout to use when the list of choices appears
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        //Applying the adapter to the spinner
+       spinner.setAdapter(adapter1);
+
+        spinner.setOnItemClickListener(this);*/
 
 
 }

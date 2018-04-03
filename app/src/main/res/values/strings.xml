@@ -16,13 +16,22 @@
     <string name="sense_it">SENSEIT!</string>
     <string name="title_activity_senseit_activity">senseit_activity</string>
 
-    <string  name="welcome">Hi there! How is your day going today? Click on the button below to start recording</string>
+    <string name="welcome">Hi there! How is your day going today? Click on the button below to start recording</string>
     <string name="submitResponse">Analyze Text!</string>
     <string name="or">OR</string>
     <string name="button">Button</string>
     <string name="say_something">Say something</string>
     <string name="voiceAnalyzer">Analyze Me!</string>
     <string name="song_text">Here are a few songs that match your mood:</string>
+    <string name="title">Title</string>
+    <string name="play_button">play</string>
+
+    <string-array name="songs_array">
+        <item>Happy</item>
+        <item>The Greatest</item>
+        <item>Hey, Soul Sister</item>
+    </string-array>
+
 
 
 </resources>

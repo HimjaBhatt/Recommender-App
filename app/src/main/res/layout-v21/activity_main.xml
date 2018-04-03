@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,70 +9,15 @@
     tools:context="com.example.himja.sense_it.MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <android.support.v7.widget.CardView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground">
-
-        <RelativeLayout
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"/>
-    </android.support.v7.widget.CardView>
-    <ImageButton
-        android:id="@+id/pause_button"
-        style="@android:style/MediaButton.Pause"
-        android:layout_width="0dp"
-        android:layout_height="47dp"
-        android:layout_marginEnd="117dp"
-        android:background="@android:color/darker_gray"
-        android:src="@android:drawable/ic_media_pause"
-        app:layout_constraintBottom_toBottomOf="@+id/play_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/play_button"
-        app:layout_constraintTop_toTopOf="@+id/play_button"
-        app:layout_constraintVertical_bias="0.0" />
+            android:layout_height="match_parent"/>
 
-    <ImageButton
-        android:id="@+id/play_button"
-        style="@android:style/MediaButton"
-        android:layout_width="0dp"
-        android:layout_height="47dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginStart="87dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:onClick="onPlaybackButtonClicked"
-        android:src="@android:drawable/ic_media_play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/pause_button"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:targetApi="lollipop" />
+    </RelativeLayout>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        tools:targetApi="lollipop" />
-
-    <TextView
-        android:id="@+id/song_text"
-        android:layout_width="190dp"
-        android:layout_height="0dp"
-        android:text="@string/song_text"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
-
-
-</android.support.v7.widget.RecyclerView>
+</android.support.constraint.ConstraintLayout>
