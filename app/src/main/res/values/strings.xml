@@ -24,7 +24,9 @@
     <string name="voiceAnalyzer">Analyze Me!</string>
     <string name="song_text">Here are a few songs that match your mood:</string>
     <string name="title">Title</string>
-    <string name="play_button">play</string>
+    <string name="play_button">Select</string>
+    <string name="next_page">Next Page</string>
+    <string name="pharell_happy">Pharell - Happy</string>
 
     <string-array name="songs_array">
         <item>Happy</item>

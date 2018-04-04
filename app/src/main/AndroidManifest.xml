@@ -42,6 +42,9 @@
                 android:value=".MainActivity" />
 
             </activity>
+        <activity android:name=".SongsActivity"
+            android:label="Songs_Page">
+        </activity>
 
     </application>
 

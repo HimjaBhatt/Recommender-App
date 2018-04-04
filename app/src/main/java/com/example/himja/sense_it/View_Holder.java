@@ -1,5 +1,6 @@
 package com.example.himja.sense_it;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -19,5 +20,13 @@ public class View_Holder extends RecyclerView.ViewHolder {
         title = (TextView)itemView.findViewById(R.id.title);
         artist = (TextView)itemView.findViewById(R.id.artist_name);
         play_button = (Button)itemView.findViewById(R.id.play_button);
+
+        play_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), SongsActivity.class);
+                view.getContext().startActivity(intent);
+            }
+        });
     }
 }

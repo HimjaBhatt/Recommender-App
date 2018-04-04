@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ScrollView;
@@ -46,231 +47,30 @@ import java.io.IOException;
 import static junit.framework.Assert.assertEquals;
 
 
-public class MainActivity extends Activity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback, AdapterView.OnItemSelectedListener
+public class MainActivity extends Activity
 {
-
-    // TODO: Replace with your client ID
-    private static final String CLIENT_ID = "ddb3ab95a0034be698313a1bd9b56d71";
-    // TODO: Replace with your redirect URI
-    private static final String REDIRECT_URI = "senseit-login://callback";
-
-    private static final String TEST_SONG_URI = "spotify:track:2TpxZ7JUBn3uw46aR7qd6V";
-
-    public static final String textMessage = "com.example.himja.MESSAGE";
-
-    private Player mPlayer;
-    public PlaybackState mCurrentPlaybackState;
-    private TextView mMetadataText;
-    private Metadata mMetadata;
-    private TextView mStatusText;
-    private ScrollView mStatusTextScrollView;
-    Spinner spinner;
-
-
-
-
-    public static final String TAG = "SpotifySdkDemo";
-
-
-    private static final int[] REQUIRES_INITIALIZED_STATE = {
-            R.id.play_button,
-            R.id.pause_button};
-
-
-    private static final int REQUEST_CODE = 1337;
-
-    public MainActivity() throws IOException, JSONException {
-    }
-
+    Button song_page;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
-                AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
-        AuthenticationRequest request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-
-        Intent myIntent = getIntent();
 
         List<Songs> songs = initializeData();
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(songs, getApplication());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-    private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
-        @Override
-        public void onSuccess() {
-            Log.e("MainActivity","OK!");
-        }
-
-        @Override
-        public void onError(Error error) {
-            logStatus("ERROR:" + error);
-        }
-    };
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                    @Override
-                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        mPlayer = spotifyPlayer;
-                        mPlayer.addConnectionStateCallback(MainActivity.this);
-                        mPlayer.addNotificationCallback(MainActivity.this);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //Disposing the player after playback is done to prevent leaking resources
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
-    }
-
-
-    public void onPlaybackButtonClicked(View view) {
-       String uri;
-        switch (view.getId()) {
-            // Handle event type as necessary
-            case R.id.play_button:
-                uri= "spotify:track:6NPVjNh8Jhru9xOmyQigds";
-                break;
-                
-            default:
-                throw new IllegalArgumentException("View ID does not have an associated URI to play");
-
-        }
-       //logStatus("Starting playback for " + uri);
-        mPlayer.playUri(mOperationCallback, uri, 0, 0);
-    }
-
-    public void onPauseButtonClicked(View view) {
-        if (mCurrentPlaybackState != null && mCurrentPlaybackState.isPlaying) {
-            mPlayer.pause(mOperationCallback);
-        } else {
-            mPlayer.resume(mOperationCallback);
-        }
-    }
-
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
 
     }
 
-    @Override
-    public void onPlaybackError(Error error) {
-        Log.d("MainActivity", "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
 
-    @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-       // mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error error) {
-        Log.d("MainActivity", "Login failed");
-    }
-
-   /* @Override
-    public void onLoginFailed(int i) {
-        Log.d("MainActivity", "Login failed");
-    }*/
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
-
-    //Error handling
-    private void logStatus(String status) {
-        Log.i(TAG, status);
-        if (!TextUtils.isEmpty(mStatusText.getText())) {
-            mStatusText.append("\n");
-        }
-        mStatusText.append(">>>" + status);
-        mStatusTextScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                // Scroll to the bottom
-                mStatusTextScrollView.fullScroll(View.FOCUS_DOWN);
-            }
-        });
-    }
-
-   @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-        String item = adapterView.getItemAtPosition(position).toString();
-
-        // Showing selected spinner item
-        Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-        String uri;
-        switch (position){
-            case 0:
-                uri= "spotify:track:6NPVjNh8Jhru9xOmyQigds";
-                break;
-            case 1:
-                uri = "spotify:track:7xHWNBFm6ObGEQPaUxHuKO";
-                break;
-
-            default:
-                throw new IllegalArgumentException("View ID does not have an associated URI to play");
-
-        }
-        mPlayer.playUri(mOperationCallback, uri, 0, 0);
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
-    class Songs{
+        class Songs{
 
         String happy_songs_uri;
         String title;
         String artist;
 
-        Songs(String happy_songs_uri, String title, String artist){
+        Songs(String title, String artist){
             this.happy_songs_uri = happy_songs_uri;
             this.title = title;
             this.artist = artist;
@@ -283,30 +83,20 @@ public class MainActivity extends Activity implements
     public List<Songs> initializeData(){
        List<Songs> happy_songs = new ArrayList<>();
         //Pharell - Happy
-        happy_songs.add(new Songs("spotify:track:6NPVjNh8Jhru9xOmyQigds","Happy", "Pharell"));
+        happy_songs.add(new Songs("Happy", "Pharell"));
         //Sia ft. Kendrick Lamar - The Greatest
-        happy_songs.add(new Songs("spotify:track:7xHWNBFm6ObGEQPaUxHuKO" ,"The Greatest", "Sia"));
+        happy_songs.add(new Songs("The Greatest", "Sia"));
         //
-        happy_songs.add(new Songs("spotify:track:5i0eU4qWEhgsDcG6xO5yvy", "Hey, Soul Sister"," Train"));
+        happy_songs.add(new Songs( "Hey, Soul Sister"," Train"));
+        happy_songs.add(new Songs("Whatever It Takes","Imagine Dragons"));
+        happy_songs.add(new Songs("The Other Side","Jason Derulo"));
+        happy_songs.add(new Songs("Cheap Thrills","Sia"));
+        happy_songs.add(new Songs("Michael Jackson","Billie Jean"));
+        happy_songs.add(new Songs("Maroon V","Sugar"));
+        happy_songs.add(new Songs("Despacito","Justin Bieber"));
+        happy_songs.add(new Songs("Kids","MGMT"));
         return happy_songs;
     }
-    private SpotifyService mService;
-    private OkHttpClient mClient = new OkHttpClient();
-
-    public Response getTrack() throws Exception{
-
-        Track payload =mService.getTrack("6NPVjNh8Jhru9xOmyQigds");
-        Request request= new Request.Builder().get().url("https://api.spotify.com/v1/tracks/6NPVjNh8Jhru9xOmyQigds").build();
-
-        Response response = mClient.newCall(request).execute();
-        assertEquals(200, response.code());
-
-     //TODO: Add a text view reference
-
-        return response;
-    }
-
-    private Headers mAuthHeader;
 
     //private OkHttpClient mClient = new OkHttpClient();
     //final String happySong = "spotify:track:6NPVjNh8Jhru9xOmyQigds";

@@ -1,6 +1,8 @@
 package com.example.himja.sense_it;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +17,11 @@ import java.util.List;
  * Created by Himja on 03/04/18.
  */
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<View_Holder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<View_Holder>{
     List<MainActivity.Songs> list = Collections.EMPTY_LIST;
     Context context;
     Button play_button;
+
 
     public RecyclerViewAdapter(List<MainActivity.Songs> list, Context context){
         this.list = list;
@@ -62,4 +65,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<View_Holder> {
         list.remove(position);
         notifyItemRemoved(position);
     }
+
+
 }
